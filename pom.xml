@@ -28,7 +28,7 @@
 		<sonar.password>admin</sonar.password> 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-                <nexus.server.url>http://34.222.244.112:8081</nexus.server.url>
+                <nexus.server.url>http://34.222.244.112:8081/</nexus.server.url>
 	</properties>
 
 	<dependencies>
