@@ -15,7 +15,7 @@ node ('master')
     properties([[$class: 'JiraProjectProperty'], buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')), [$class: 'JobLocalConfiguration', changeReasonComment: ''], pipelineTriggers([pollSCM('* * * * *')])])
     def mvnHome
     stage('Preparation') { // for display purposes
-        git branch: ${env.BRANCH_NAME},credentialsId: '5906d0e3-9816-404e-9a71-4769555aac72', url: 'https://github.com/param-tst/maven-web-application.git'
+        git branch: env.BRANCH_NAME,credentialsId: '5906d0e3-9816-404e-9a71-4769555aac72', url: 'https://github.com/param-tst/maven-web-application.git'
      
         // Get the Maven tool.
         // ** NOTE: This 'M3' Maven tool must be configured
