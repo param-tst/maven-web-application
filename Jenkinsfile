@@ -35,7 +35,7 @@ node ('master')
      
   
        
-    }
+   
     stage('nexus') {
         // Run the maven build
         withEnv(["MVN_HOME=$mvnHome"]) {
