@@ -33,22 +33,7 @@ node ('master')
         }
     }
      
-     stage('sonar') {
-        // Run the maven build
-        withEnv(["MVN_HOME=$mvnHome"]) {
-            if (isUnix()) {
-                sh '"$MVN_HOME/bin/mvn" -Dmaven.test.failure.ignore clean sonar:sonar package'
-            } else {
-                bat(/"%MVN_HOME%\bin\mvn" -Dmaven.test.failure.ignore clean package/)
-            }
-        }
-    }
   
-     stage('tomcat-deploy') {
-       sshagent(['5b5f1a66-d425-4c21-ac7b-d1cfad441db1']) {
-             sh 'scp -o StrictHostKeyChecking=no target/maven-web-application.war centos@52.33.192.99:/opt/tomcat9/webapps'
-    // some block
-}
        
     }
     stage('nexus') {
