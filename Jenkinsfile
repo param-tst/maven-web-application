@@ -28,11 +28,13 @@ node {
            
              sh '''#!/bin/bash
              scp -o StrictHostKeyChecking=no /var/lib/jenkins.tar centos@34.216.166.134:/home/centos/
-             ssh  -o StrictHostKeyChecking=no  $USERNAME@$IPADDRESS "sudo cp -r /home/centos/jenkins.war /var/lib/"
-              $SSH_OPTS $USERNAME@$IPADDRESS "sudo chown jenkins:jenkins -R /var/lib/jenkins.war"
-            // $SSH_OPTS $USERNAME@$IPADDRESS "sudo tar -xvf /var/lib/jenkins.war"
+             ssh  -o StrictHostKeyChecking=no  $USERNAME@$IPADDRESS 
+             sudo cp -r /home/centos/jenkins.war /var/lib/
+            
              
               '''
+            // $SSH_OPTS $USERNAME@$IPADDRESS "sudo chown jenkins:jenkins -R /var/lib/jenkins.war"
+            // $SSH_OPTS $USERNAME@$IPADDRESS "sudo tar -xvf /var/lib/jenkins.war"
 }
        
     }
