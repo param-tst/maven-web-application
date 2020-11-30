@@ -1,54 +1,40 @@
-node ('master')
- {
+node {
+    properties([[$class: 'JiraProjectProperty'], buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')), [$class: 'JobLocalConfiguration', changeReasonComment: ''], pipelineTriggers([pollSCM('* * * * *')])])
+    def mvnHome;
+    def SSH_OPTS="ssh  -o StrictHostKeyChecking=no";
+    def USERNAME="centos";
+    def IPADDRESS="34.216.166.134";
+    
+     stage('make-tar') {
+         
+       
+         sh '''#!/bin/bash
+               cd /var/lib
+               pwd
+               sudo tar -cf  jenkins.tar ./jenkins
+               sudo chown -R jenkins:jenkins ./jenkins.tar
+                ls -lart|grep jenkins.tar
+         '''
+   
+       
+        
+      
+       
+    }
+    stage('migration') {
+         
+         
+       sshagent(['5b5f1a66-d425-4c21-ac7b-d1cfad441db1']) {
+           
+             sh '''#!/bin/bash
+             scp -o StrictHostKeyChecking=no /var/lib/jenkins.tar centos@34.216.166.134:/home/centos/
+             ssh  -o StrictHostKeyChecking=no  $USERNAME@$IPADDRESS "sudo cp -r /home/centos/jenkins.war /var/lib/"
+              $SSH_OPTS $USERNAME@$IPADDRESS "sudo chown jenkins:jenkins -R /var/lib/jenkins.war"
+            // $SSH_OPTS $USERNAME@$IPADDRESS "sudo tar -xvf /var/lib/jenkins.war"
+             
+              '''
+}
+       
+    }
   
-  def mavenHome = tool name: "mvn3.6.3"
-  
-      echo "GitHub BranhName ${env.BRANCH_NAME}"
-      echo "Jenkins Job Number ${env.BUILD_NUMBER}"
-      echo "Jenkins Node Name ${env.NODE_NAME}"
-  
-      echo "Jenkins Home ${env.JENKINS_HOME}"
-      echo "Jenkins URL ${env.JENKINS_URL}"
-      echo "JOB Name ${env.JOB_NAME}"
-  
-   properties([[$class: 'JiraProjectProperty'], buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '2', daysToKeepStr: '', numToKeepStr: '2')), pipelineTriggers([pollSCM('* * * * *')])])
-  
-  stage("CheckOutCodeGit")
-  {
-   git branch: '${env.BRANCH_NAME}', credentialsId: '65fb834f-a83b-4fe7-8e11-686245c47a65', url: 'https://github.com/MithunTechnologiesDevOps/maven-web-application.git'
- }
- 
- stage("Build")
- {
- sh "${mavenHome}/bin/mvn clean package"
- }
- 
-  /*
- stage("ExecuteSonarQubeReport")
- {
- sh "${mavenHome}/bin/mvn sonar:sonar"
- }
- 
- stage("UploadArtifactsintoNexus")
- {
- sh "${mavenHome}/bin/mvn deploy"
- }
- 
-  stage("DeployAppTomcat")
- {
-  sshagent(['423b5b58-c0a3-42aa-af6e-f0affe1bad0c']) {
-    sh "scp -o StrictHostKeyChecking=no target/maven-web-application.war  ec2-user@15.206.91.239:/opt/apache-tomcat-9.0.34/webapps/" 
-  }
- }
- 
- stage('EmailNotification')
- {
- mail bcc: 'devopstrainingblr@gmail.com', body: '''Build is over
-
- Thanks,
- Mithun Technologies,
- 9980923226.''', cc: 'devopstrainingblr@gmail.com', from: '', replyTo: '', subject: 'Build is over!!', to: 'devopstrainingblr@gmail.com'
- }
- */
- 
- }
+}
