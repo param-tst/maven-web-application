@@ -1,12 +1,14 @@
 node {
-    properties([[$class: 'JiraProjectProperty'], buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')), [$class: 'JobLocalConfiguration', changeReasonComment: ''], pipelineTriggers([pollSCM('* * * * *')])])
     def mvnHome
+    def buildNumber=BUILD_NUMBER
     stage('Preparation') { // for display purposes
-        git branch:'master',credentialsId: '5906d0e3-9816-404e-9a71-4769555aac72', url: 'https://github.com/param-tst/maven-web-application.git'
+        git branch:'pipeline-withdeployment-only',credentialsId: '5906d0e3-9816-404e-9a71-4769555aac72', url: 'https://github.com/param-tst/maven-web-application.git'
         // Get the Maven tool.
         // ** NOTE: This 'M3' Maven tool must be configured
         // **       in the global configuration.
-        mvnHome = tool 'mvn3.6.3'
+        mvnHome = tool 'maven-latest'
+        
+
     }
     stage('Build') {
         // Run the maven build
@@ -21,11 +23,19 @@ node {
      
     
   
-     stage('tomcat-deploy') {
-       sshagent(['5b5f1a66-d425-4c21-ac7b-d1cfad441db1']) {
-             sh 'scp -o StrictHostKeyChecking=no target/maven-web-application.war centos@34.216.166.134:/opt/tomcat9/webapps'
-    // some block
-}
+//      stage('tomcat-deploy') {
+//       sshagent(['5b5f1a66-d425-4c21-ac7b-d1cfad441db1']) {
+//              sh 'scp -o StrictHostKeyChecking=no target/maven-web-application.war centos@34.216.166.134:/opt/tomcat9/webapps'
+//     // some block
+// }
+       
+   // }
+   
+    stage('build-docker-image') {
+   
+             sh "docker build -t paramveer1974/gagneza-group:${buildNumber} ."
+    
+
        
     }
     
