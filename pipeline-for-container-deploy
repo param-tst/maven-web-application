@@ -23,14 +23,7 @@ node {
      
     
   
-//      stage('tomcat-deploy') {
-//       sshagent(['5b5f1a66-d425-4c21-ac7b-d1cfad441db1']) {
-//              sh 'scp -o StrictHostKeyChecking=no target/maven-web-application.war centos@34.216.166.134:/opt/tomcat9/webapps'
-//     // some block
-// }
-       
-   // }
-   
+
     stage('build-docker-image') {
    
              sh "docker build -t paramveer1974/gagneza-group:${buildNumber} ."
@@ -38,5 +31,20 @@ node {
 
        
     }
+    stage('upload-docker-image') {
+        withCredentials([string(credentialsId: 'docker_password', variable: 'docker_password')]) {
+        sh "docker login -u paramveer1974 -p ${docker_password}"
+        sh "docker push paramveer1974/gagneza-group:${buildNumber}"
+}
+          
     
+    
+
+       
+    }
+     
+     stage('container-launch') {
+    sshagent(['container-server']) {
+    sh "ssh -o StrictHostKeyChecking=no ec2-user@34.214.50.110 docker run -d -p 8080:8080 --name paramContainer${buildNumber} paramveer1974/gagneza-group:${buildNumber}"
+}}
 }
